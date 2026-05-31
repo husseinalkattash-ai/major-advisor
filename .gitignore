@@ -1,0 +1,15 @@
+# Python virtual environment
+.venv/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+
+# Design handoff bundle (reference only; raw extraction artifacts)
+_design/
+_design.bin
+_design_raw.txt

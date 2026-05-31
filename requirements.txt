@@ -1,0 +1,7 @@
+# Python dependencies for running the CLIPS expert system from Python.
+# The reasoning core is pure CLIPS; clipspy embeds the CLIPS 6.4 engine.
+clipspy==1.0.6
+
+# Web UI. Flask serves the Major Advisor web app (webui/) and the CLIPS-backed
+# /api/recommend endpoint (server.py).
+flask>=3.0

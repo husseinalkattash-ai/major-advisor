@@ -5,9 +5,7 @@
 ;;;
 ;;;   (consult)              -> INTERACTIVE: ask academics -> interests -> skills,
 ;;;                             validate each answer, assert attr facts, then run.
-;;;   (consult-batch <id>)   -> BATCH: load a ready-made profile from
-;;;                             tests/profiles/<id>.clp, then run.
-;;;   (consult-file <path>)  -> BATCH: load any profile file by path, then run.
+;;;   (consult-file <path>)  -> BATCH: load a profile file by path, then run.
 ;;;
 ;;; DESIGN: the module is built from deffunctions, not defrules, so it shares no
 ;;; rules with the scoring engine and cannot perturb the Rete agenda. Both modes
@@ -83,16 +81,9 @@
    (run))
 
 ;;; ----------------------------------------------------------------------------
-;;; BATCH MODE entry points.
+;;; BATCH MODE entry point: load a profile file (a deffacts of attr facts) by
+;;; path, then run the engine.
 ;;; ----------------------------------------------------------------------------
-(deffunction consult-batch (?pid)
-   (bind ?file (str-cat "tests/profiles/" ?pid ".clp"))
-   (printout t "Loading profile '" ?pid "' from " ?file " ..." crlf)
-   (load* ?file)
-   (reset)
-   (run)
-   (undeffacts (sym-cat "profile-" ?pid)))
-
 (deffunction consult-file (?path)
    (printout t "Loading profile file " ?path " ..." crlf)
    (load* ?path)

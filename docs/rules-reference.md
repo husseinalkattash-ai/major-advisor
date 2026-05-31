@@ -208,8 +208,7 @@ separate from the engine). Both modes only assert `attr` facts and call `(run)`.
 | `ask-attr (?student ?attr ?allowed)` | prompt for one attribute; lower-cases the answer; **re-prompts on any invalid value**; `quit`/EOF abort safely; on success asserts `(attr (student ?student) (name ?attr) (value ?in))` |
 | `ask-group (?student ?attrs ?allowed ?title)` | ask every attribute in a group; propagates an abort |
 | `consult` | INTERACTIVE mode: `(reset)`, ask all three groups for student `you`, then `(run)` |
-| `consult-batch (?pid)` | BATCH mode: `load*` `tests/profiles/<pid>.clp`, `(reset)`, `(run)`, `undeffacts` the profile |
-| `consult-file (?path)` | BATCH mode: load any profile file by path, `(reset)`, `(run)` |
+| `consult-file (?path)` | BATCH mode: load a profile file by path, `(reset)`, `(run)` |
 
 - **Knowledge source:** spec §6 (interactive ordering, validation against allowed
   values, batch loading of ready-made profiles).
@@ -221,8 +220,7 @@ separate from the engine). Both modes only assert `attr` facts and call `(run)`.
 
 ## Logical Unit Tests
 
-Beyond the gold-standard runner (`tests/run-tests.clp`, which measures end-to-end
-accuracy), these are small fact sets that isolate **one** rule and check it fires
+These are small fact sets that isolate **one** rule and check it fires
 and produces the correct effect (spec §9.4). Each can be pasted at a CLIPS prompt
 after loading the system.
 

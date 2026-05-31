@@ -8,9 +8,9 @@ embeds, and how knowledge is represented.
 
 ## 1. System Architecture
 
-The system is five logical modules, all inside CLIPS, plus a documented gold
-standard. Knowledge (facts) is kept strictly separate from logic (rules) so the
-knowledge base can grow without touching the engine (spec §12).
+The system is five logical modules, all inside CLIPS. Knowledge (facts) is kept
+strictly separate from logic (rules) so the knowledge base can grow without
+touching the engine (spec §12).
 
 | # | Module | File(s) | Responsibility |
 |---|--------|---------|----------------|
@@ -20,7 +20,6 @@ knowledge base can grow without touching the engine (spec §12).
 | 4 | Ranking & output | `ranking.clp` | normalise to %, sort, print the explained top 5 |
 | 5 | Consultation | `consultation.clp` | gather the profile interactively or in batch |
 | — | Templates | `templates.clp` | shared `deftemplate`s and the ordinal rank scale |
-| — | Evaluation | `tests/` | 20-profile gold standard + runner + metrics |
 
 ### Component / data-flow diagram
 

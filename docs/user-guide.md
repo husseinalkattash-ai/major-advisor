@@ -5,12 +5,19 @@ its recommendations. The consultation front-end (`src/consultation.clp`) offers
 an **interactive** mode (answer questions) and a **batch** mode (load a ready-made
 profile). Both feed the same scoring engine.
 
+> **Recommended — the web app.** After setup (`./setup.ps1` or `./setup.sh`), run
+> `.venv\Scripts\python.exe server.py` (or `python run.py web`) and open
+> <http://127.0.0.1:8000>. It's an Arabic (RTL), desktop guided flow; the ranking
+> is computed by the real CLIPS engine.
+>
+> The sections below cover the CLIPS command-line modes.
+
 ---
 
 ## 1. Starting the System
 
 You need CLIPS 6.4+ (the `clips` executable). From the **project root** (the
-folder containing `src/` and `tests/`):
+folder containing `src/`):
 
 ```
 clips -f2 src/main.clp
@@ -48,21 +55,14 @@ advisor prints your **top 5 majors** with match percentages and justifications.
 
 Type `quit` at any prompt to cancel.
 
-### Batch mode (load a ready-made profile)
+### Batch mode (load a profile file)
 
-To evaluate one of the prepared test profiles in `tests/profiles/` (e.g. `p14`):
-
-```clips
-(consult-batch p14)
-```
-
-To load a profile file from any path:
+A profile file is a `deffacts` of `attr` facts for one student. To load one from
+any path and run it:
 
 ```clips
-(consult-file "tests/profiles/p03.clp")
+(consult-file "path/to/profile.clp")
 ```
-
-Batch mode is what the automated test runner (`tests/run-tests.clp`) uses.
 
 ---
 
@@ -168,9 +168,11 @@ Thank you. Analysing your profile...
 
 ## 5. Example Batch Session
 
+Loading a profile file for an enterprising, creative student produces:
+
 ```
-CLIPS> (consult-batch p14)
-Loading profile 'p14' from tests/profiles/p14.clp ...
+CLIPS> (consult-file "profile.clp")
+Loading profile file profile.clp ...
 
 ====================================================================
    TOP 5 MAJOR RECOMMENDATIONS FOR YOU

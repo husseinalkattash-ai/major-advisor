@@ -2,7 +2,7 @@
 ;;; main.clp
 ;;; Entry point. Loads all modules in the correct dependency order.
 ;;;
-;;; Run from the PROJECT ROOT (the directory that contains src/ and tests/):
+;;; Run from the PROJECT ROOT (the directory that contains src/):
 ;;;     clips -f2 src/main.clp
 ;;; or, inside a CLIPS prompt started in the project root:
 ;;;     (load "src/main.clp")

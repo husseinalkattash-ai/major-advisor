@@ -12,9 +12,7 @@ fired.
   Architecture, Graphic Design).
 - Graded scoring with full / half / zero credit, normalised to a match
   percentage, with an explained top-5 ranking.
-- Two front-ends: an **interactive** questionnaire and a **batch** mode that
-  loads ready-made profiles.
-- A gold-standard test suite of 20 profiles with measured accuracy.
+- A modern Arabic web app, plus an interactive terminal consultation.
 
 ---
 
@@ -42,10 +40,6 @@ major-advisor/
 │   ├── ranking.clp        ; sort + top-5 report
 │   ├── consultation.clp   ; interactive & batch front-ends
 │   └── main.clp           ; loads all modules in order
-├── tests/
-│   ├── profiles/          ; 20 gold-standard student profiles (p01..p20)
-│   ├── expected-results.csv ; expert-expected recommendation per profile
-│   └── run-tests.clp      ; runs all profiles, prints metrics + confusion matrix
 ├── docs/
 │   ├── design.md                 ; architecture, why KB + forward chaining, RIASEC
 │   ├── knowledge-acquisition.md  ; knowledge sources + the decision table
@@ -53,6 +47,15 @@ major-advisor/
 │   ├── rules-reference.md        ; every rule: purpose, code, source
 │   ├── user-guide.md             ; how to run a consultation
 │   └── evaluation-report.md      ; methodology, metrics, error analysis
+├── webui/                 ; Major Advisor web UI (Arabic, RTL, desktop)
+│   ├── index.html         ;   design shell (React + Babel, from Claude Design)
+│   ├── ma-clips.js        ;   wires the UI to the real CLIPS engine
+│   └── ma-*.js(x), *.css  ;   design components, data, copy, styles
+├── server.py              ; Flask backend: serves webui/ + /api/recommend (CLIPS)
+├── advisor.py             ; shared Python wrapper around the CLIPS engine
+├── run.py                 ; command-line launcher (embeds CLIPS via clipspy)
+├── requirements.txt       ; Python dependencies (clipspy, flask)
+├── setup.ps1 / setup.sh   ; one-time virtual-environment setup
 └── README.md
 ```
 
@@ -60,8 +63,8 @@ major-advisor/
 
 ## How to Run
 
-All commands are run from the **project root** (the folder containing `src/` and
-`tests/`) so the relative load paths resolve.
+All commands are run from the **project root** (the folder containing `src/`) so
+the relative load paths resolve.
 
 ### Interactive consultation
 
@@ -79,41 +82,69 @@ Answer each prompt with an allowed value (academics: `weak`/`average`/`good`/
 `excellent`; interests & skills: `low`/`medium`/`high`; answers are
 case-insensitive; type `quit` to cancel). See [docs/user-guide.md](docs/user-guide.md).
 
-### Batch mode (evaluate a ready-made profile)
+### Run with Python (no CLIPS binary needed)
 
-After loading the system, load one of the test profiles:
+The reasoning core is plain CLIPS, so the project also runs under
+[`clipspy`](https://clipspy.readthedocs.io/) (an embedded CLIPS 6.4 engine). A
+launcher (`run.py`) and a setup script create a self-contained virtual
+environment with everything needed.
 
-```clips
-(consult-batch p03)        ; or any id p01..p20
-```
-
-### Run the gold-standard test suite
-
-```
-clips -f2 tests/run-tests.clp
-```
-
-This prints a per-profile table, the metrics, and the faculty confusion matrix.
-
-### Running without the CLIPS binary
-
-The system is plain CLIPS, so it also runs under `clipspy`:
+**One-time setup** (creates `.venv/` and installs `clipspy`):
 
 ```
-pip install clipspy
-python -c "import clips; clips.Environment().batch_star('tests/run-tests.clp')"
+# Windows (PowerShell)
+./setup.ps1
+
+# Linux / macOS
+./setup.sh
 ```
 
-(All outputs in this repo were verified this way.)
+Or manually:
+
+```
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt   # Windows
+# ./.venv/bin/python -m pip install -r requirements.txt        # Linux/macOS
+```
+
+**Run it** (after `.\.venv\Scripts\Activate.ps1` or `source .venv/bin/activate`):
+
+```
+python run.py                 # interactive menu
+python run.py consult         # interactive consultation (20 questions)
+python run.py batch p03       # run a ready-made profile
+python run.py file <path>     # run a profile from any .clp file
+python run.py test            # run the gold-standard suite + metrics
+python run.py list            # list available test profiles
+```
+
+(All outputs in this repo were verified through this Python path.)
+
+### Web app — Major Advisor (recommended)
+
+A polished **Arabic, RTL, desktop** web app built from a Claude Design hand-off —
+a guided multi-screen flow (welcome → academic → interests → skills → review →
+processing → ranked results → detail) with a live Tweaks panel (theme, rating
+control, match visualisation). The ranking and match percentages are produced by
+the **real CLIPS engine** (`server.py` exposes `/api/recommend`, backed by
+`advisor.py`).
+
+```
+.venv\Scripts\python.exe server.py        # Windows
+./.venv/bin/python server.py              # Linux/macOS
+# or:  python run.py web
+```
+
+Open <http://127.0.0.1:8000>.
 
 ---
 
 ## Example Session
 
-```
-CLIPS> (consult-batch p03)
-Loading profile 'p03' from tests/profiles/p03.clp ...
+For a strong science-and-people profile (excellent biology/chemistry, high
+investigative and social), the engine produces:
 
+```
 ====================================================================
    TOP 5 MAJOR RECOMMENDATIONS FOR YOU
 ====================================================================
@@ -157,7 +188,7 @@ Full detail in [docs/design.md](docs/design.md) and [docs/rules-reference.md](do
 
 ## Evaluation Results
 
-Measured by `tests/run-tests.clp` over the 20 gold-standard profiles:
+Measured over a 20-profile gold standard during development:
 
 | Metric | Result | Target |
 |--------|:------:|:------:|
@@ -165,8 +196,8 @@ Measured by `tests/run-tests.clp` over the 20 gold-standard profiles:
 | Top-3 hit rate | **95%** | ≥ 90% ✅ |
 | Acceptable@3 | **100%** | — |
 
-Both targets are met. Methodology, the confusion matrix, and error analysis are
-in [docs/evaluation-report.md](docs/evaluation-report.md).
+Both targets were met. Methodology, the confusion matrix, and error analysis are
+recorded in [docs/evaluation-report.md](docs/evaluation-report.md).
 
 ---
 
